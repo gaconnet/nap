@@ -275,6 +275,7 @@ class ResourceEngine(object):
             raise ValueError('No update url found')
 
         response = self._request(self.model._meta['update_method'], url,
+            resource_obj=resource_obj,
             data=self.serialize(resource_obj, for_read=True))
 
         self.validate_update_response(response)
@@ -317,6 +318,7 @@ class ResourceEngine(object):
         new_obj_data = self.serialize(resource_obj, for_read=True)
         response = self._request(
             'POST', self.get_create_url(resource_obj, **kwargs),
+            resource_obj=resource_obj,
             data=new_obj_data
         )
 
@@ -331,7 +333,8 @@ class ResourceEngine(object):
         """
 
         delete_url  = self.get_delete_url(resource_obj, **kwargs)
-        response = self._request('DELETE', delete_url)
+        response = self._request('DELETE', delete_url,
+                                 resource_obj=resource_obj)
 
         self.validate_delete_response(response)
         self.handle_delete_response(response)

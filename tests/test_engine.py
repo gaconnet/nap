@@ -262,6 +262,59 @@ class TestResourceEngineWriteMethods(unittest.TestCase):
                 data=data, headers=self.headers, auth=None)
         SampleResourceModel._lookup_urls = []
 
+    @mock.patch('nap.engine.ResourceEngine.validate_create_response')
+    @mock.patch('nap.engine.ResourceEngine.handle_create_response')
+    @mock.patch('nap.engine.ResourceEngine._request')
+    def test_create_when_overriding_root_url(self, mock_request, *mocks):
+        # Given: An instance with a specialized root_url
+        dm = SampleResourceModel(root_url='the://instance/url/')
+
+        # When: Creating via instance's ResourceEngine
+        dm.objects.create(dm)
+
+        assert mock_request.called  # preliminary
+
+        # Then: It passes the instance to ``ResourceEngine._request``
+        kwargs = mock_request.call_args[1]
+        assert 'resource_obj' in kwargs
+        assert kwargs['resource_obj'] is dm
+
+    @mock.patch('nap.engine.ResourceEngine.get_update_url')
+    @mock.patch('nap.engine.ResourceEngine.validate_update_response')
+    @mock.patch('nap.engine.ResourceEngine.handle_update_response')
+    @mock.patch('nap.engine.ResourceEngine._request')
+    def test_update_when_overriding_root_url(self, mock_request, *mocks):
+        # Given: An instance with a specialized root_url
+        dm = SampleResourceModel(root_url='the://instance/url/')
+
+        # When: Updating via instance's ResourceEngine
+        dm.objects.update(dm)
+
+        assert mock_request.called  # preliminary
+
+        # Then: It passes the instance to ``ResourceEngine._request``
+        kwargs = mock_request.call_args[1]
+        assert 'resource_obj' in kwargs
+        assert kwargs['resource_obj'] is dm
+
+    @mock.patch('nap.engine.ResourceEngine.get_delete_url')
+    @mock.patch('nap.engine.ResourceEngine.validate_delete_response')
+    @mock.patch('nap.engine.ResourceEngine.handle_delete_response')
+    @mock.patch('nap.engine.ResourceEngine._request')
+    def test_delete_when_overriding_root_url(self, mock_request, *mocks):
+        # Given: An instance with a specialized root_url
+        dm = SampleResourceModel(root_url='the://instance/url/')
+
+        # When: Updating via instance's ResourceEngine
+        dm.objects.delete(dm)
+
+        assert mock_request.called  # preliminary
+
+        # Then: It passes the instance to ``ResourceEngine._request``
+        kwargs = mock_request.call_args[1]
+        assert 'resource_obj' in kwargs
+        assert kwargs['resource_obj'] is dm
+
     def test_write_with_no_lookup_url(self):
 
         from pytest import raises
