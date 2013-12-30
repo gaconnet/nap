@@ -13,13 +13,17 @@ class ResourceEngine(object):
         self.model = model
         self._tmp_request_args = {}
 
-    def _request(self, request_method, url, *args, **kwargs):
+    def _request(self, request_method, url, resource_obj=None, *args,
+                 **kwargs):
         "Construct a NapRequest and send it via a requests.rest call"
 
         try:
             root_url = self.model._meta['root_url']
         except KeyError:
             raise ValueError("Nap requests require root_url to be defined")
+
+        if resource_obj:
+            root_url = resource_obj._root_url
 
         full_url = "%s%s" % (root_url, url)
         self.logger.info("Trying to hit %s" % full_url)

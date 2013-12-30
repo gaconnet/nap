@@ -62,6 +62,24 @@ class TestResourceModelURLMethods(BaseResourceModelTest):
 
         self.engine.model._meta['urls'] = old_urls
 
+    @mock.patch('nap.engine.NapRequest')
+    def test_root_url(self, mock_request):
+        engine = self.get_engine()
+        instance = engine.model(root_url='the://instance/url/')
+
+        # Given: The instance override's Meta's root_url to be a new value
+        assert engine.model._meta['root_url'] != instance._root_url
+
+        # When: Sending a ``_request``
+        engine._request('GET', 'path/', resource_obj=instance)
+
+        assert mock_request.called  # preliminary
+
+        # Then: It uses the instance's root_url
+        expected_url = '{root}path/'.format(root=instance._root_url)
+        actual_url = mock_request.call_args[0][1]
+        assert actual_url == expected_url
+
 
 class TestResourceEngineAccessMethods(BaseResourceModelTest):
 
