@@ -61,7 +61,7 @@ class ResourceEngine(object):
 
     # url methods
     def _generate_url(self, url_type='lookup', resource_obj=None, **kwargs):
-        """Iterates through object's URL list to find an approrpiate match
+        """Iterates through object's URL list to find an appropriate match
         between ``url_type`` and ``kwargs
 
         :param url_type: string representing the type of URL to find. options \
